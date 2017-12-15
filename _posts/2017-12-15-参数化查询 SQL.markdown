@@ -1,0 +1,86 @@
+---
+layout: post
+title:  "参数化查询 SQL"
+date:   2017-12-15 16:17:10 +0800
+categories: java database
+---
+#### 绑定变量
+
+参数化查询是通过绑定参数实现的，绑定参数也叫动态参数，或绑定变量。
+
+它不是直接把值拼接在 `SQL` 里面，而是使用占位符 `?`，`:name`，或者 `@name` 组装成 `SQL` 语句，再通过另外的 API 设置值实现的。
+
+#### 绑定变量的作用
+
+1. 避免 SQL 注入安全问题
+
+    一个典型的存在SQL 注入问题的语句如下：
+
+        statement = "SELECT * FROM users WHERE name = '" + userName + "';"
+
+    如果设置 `userName` 变量为 `' OR '1'='1`，那么上述语句将变成：
+
+        SELECT * FROM users WHERE name = '' OR '1'='1';
+
+    这将导致意想不到的结果。
+
+    采用绑定变量方式修改如下：
+
+        statement = "SELECT * FROM users WHERE name = ?"
+
+2. 避免硬解析提高性能
+
+    如果把 `SQL` 语句比作 `JAVA` 代码，那么绑定变量就相当于程序里面的变量。`JAVA` 代码编译一次后可以多次运行，`SQL` 语句也一样，解析之后存放在共享池里面，不同的绑定变量值生成多个 `SQL` 的变形，复用同一个 `SQL` 语句。这样就达到了解析一次，多次复用的效果了。
+
+#### 绑定变量的使用
+
+绑定变量可以用在 `SQL` 语句的 `WHERE` 条件查询里面，但是不能用它来替换表名或列名，因为它不允许改变 `SQL` 语句的结构。
+
+像下面的语句是正确的：
+
+    SELECT * FROM users WHERE age BETWEEN ? AND ?;
+
+像下面的语句是错误的：
+
+    SELECT * FROM ? WHERE ?;
+
+特殊地，`IN` 后面的条件直接使用绑定变量可能达不到想要的结果。
+
+    WHERE id IN (?)
+
+设置变量值之后，变成：
+
+    WHERE id IN ('1,2,3')
+
+但是我们需要的结果却是：
+
+    WHERE id IN (1, 2, 3)
+
+如果使用 `OR` 来修改，那么将变成：
+
+    WHERE (id = ? OR id = ? OR id = ?)
+
+虽然绑定了变量，但是因为 `id` 的数量不确定，所以也达不到绑定变量的效果。
+
+一种可行的方法如下：
+
+    with id_generator
+    as
+    (
+      SELECT regexp_substr(:txt, '[^,]+', 1, LEVEL) token
+      FROM dual
+      CONNECT BY LEVEL <= length(:txt) - length(REPLACE(:txt, ',', '')) + 1
+    )
+    select u.id, u.username
+    from users u, id_generator g
+    where u.id = g.token;
+
+#### 参考文献
+
+1. [Parameterized Queries][a]
+2. [SQL injection][b]
+3. [How do I bind a variable IN list?][c]
+
+[a]: http://use-the-index-luke.com/sql/where-clause/bind-parameters
+[b]: https://en.wikipedia.org/wiki/SQL_injection
+[c]: http://betteratoracle.com/posts/20-how-do-i-bind-a-variable-in-list
