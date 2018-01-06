@@ -1,0 +1,45 @@
+---
+layout: post
+title:  "UML"
+date:   2018-01-06 17:18:35 +0800
+categories: design
+---
+#### UML 简介
+
+[UML][UML] 是统一建模语言的缩写，一种用于说明、可视化、构建和编写面向对象软件的方法。
+
+#### UML 规范
+
+最新规范是 [UML 2.5][UML 2.5]，包含了两类图形，结构图和行为图。结构图展示系统中对象的静态结构，描述和时间无关的元素。行为图展示系统中对象的动态行为，描述随着时间流动发生的变化。
+
+[UML 2.5][UML 2.5]规范中对所有图形做了分类，如下图所示。
+
+![diagram][diagram]
+
+#### UML 工具
+
+[ArgoUML][ArgoUML]
+
+2003年，ArgoUML获得了《软件开发杂志》的设计和分析工具类别的年度读者选择奖（annual Readers' Choice Award）。
+
+[StarUML][StarUML]
+
+一个开源的 UML 工具软件，支持 UML 2.0 的大多数图。
+
+#### UML 使用
+
+UML 作为一种软件建模语言，提供了一种可视化软件架构的方法。比如 4+1 视图模型，从逻辑视图、开发视图、过程视图、物理视图和用例图多个角度描述系统架构。
+
+![4+1][4+1]
+
+#### 参考文献
+
+1. [A complete UML tutorial for Java developers][tutorial]
+
+[UML]: https://zh.wikipedia.org/wiki/统一建模语言
+[UML 2.5]: http://www.omg.org/spec/UML/2.5/PDF
+[diagram]: /images/2018-01-06/diagram.png "The taxonomy of structure and behavior diagrams"
+[ArgoUML]: https://zh.wikipedia.org/wiki/StarUML
+[StarUML]: https://zh.wikipedia.org/wiki/ArgoUML
+[tutorial]: http://www.codemanship.co.uk/parlezuml
+[4+1]: /images/2018-01-06/4+1.png "The 4+1 View Of Architecture"
